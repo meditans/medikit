@@ -37,13 +37,11 @@ subterms(Whole, Goal, Subterms) :-
 
 
 % Local knowledgebases
-
-set_knowledge(Knowledge, Predicates) :-
-    maplist(retractall, Predicates),
+:- meta_predicate set_knowledge(+, :).
+set_knowledge(Knowledge, Module:Predicates) :-
+    maplist({Module}/[P]>>retractall(Module:P), Predicates),
     abolish_all_tables,
-    mapsubterms([Subterm,_]>>(member(P, Predicates),
-                              subsumes_term(P, Subterm),
-                              assertz(Subterm)),
+    mapsubterms({Module}/[Subterm,_]>>(member(P, Predicates), subsumes_term(P, Subterm), assertz(Module:Subterm)),
                 Knowledge, _).
 
 
