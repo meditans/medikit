@@ -6,6 +6,9 @@
                       % Operation on subterms
                       subterms/3,
 
+                      % Utilities for local knowledgebases
+                      set_knowledge/2,
+
                       % Utilities for the chr store
                       find_constraint/2,
                       local_chr/3,
@@ -31,6 +34,17 @@ list_sum(L, Sum) :- sum_list(L, Sum).
 subterms(Whole, Goal, Subterms) :-
     foldsubterms({Goal}/[A,S0,S1] >> (call(Goal,A), S1=[A|S0]),
                  Whole, [], Subterms).
+
+
+% Local knowledgebases
+
+set_knowledge(Knowledge, Predicates) :-
+    maplist(retractall, Predicates),
+    abolish_all_tables,
+    mapsubterms([Subterm,_]>>(member(P, Predicates),
+                              subsumes_term(P, Subterm),
+                              assertz(Subterm)),
+                Knowledge, _).
 
 
 % CHR utilities
