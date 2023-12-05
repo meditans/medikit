@@ -2,6 +2,8 @@
                       % More operations on lists
                       list_sum/2,
                       list_product/2,
+                      fold_op/4,
+                      fold_op/3,
 
                       % Operation on subterms
                       subterms/3,
@@ -27,6 +29,13 @@ list_product(L, Prod) :-
     foldl([A,B,C] >> (C is A*B), L, 1, Prod).
 
 list_sum(L, Sum) :- sum_list(L, Sum).
+
+:- meta_predicate fold_op(+, +, +, -).
+fold_op(Op, Ls, Init, Res) :-
+    foldl({Op}/[X,A,R]>>(R =.. [Op, A, X]), Ls, Init, Res).
+
+:- meta_predicate fold_op(+, +, -).
+fold_op(Op, [L|Ls], Res) :- fold_op(Op, Ls, L, Res).
 
 
 % Subterms matching a given predicate
