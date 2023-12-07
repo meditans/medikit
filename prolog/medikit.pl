@@ -2,12 +2,15 @@
                       % More operations on lists
                       list_sum/2,
                       list_product/2,
+                      difs/1,
                       fold_op/4,
                       fold_op/3,
                       maplist_op/3,
                       maplist_op/4,
                       maplist_op/5,
                       maplist_op/6,
+                      enumerate/2,
+                      compare_like/4,
 
                       % Operation on subterms
                       subterms/3,
@@ -37,13 +40,15 @@ list_product(L, Prod) :-
 
 list_sum(L, Sum) :- sum_list(L, Sum).
 
+difs([]).
+difs([Var|Vars]) :- maplist(dif(Var), Vars), difs(Vars).
+
 :- meta_predicate fold_op(+, +, +, -).
 fold_op(Op, Ls, Init, Res) :-
     foldl({Op}/[X,A,R]>>(R =.. [Op, A, X]), Ls, Init, Res).
 
 :- meta_predicate fold_op(+, +, -).
 fold_op(Op, [L|Ls], Res) :- fold_op(Op, Ls, L, Res).
-
 
 maplist_op(Op, A, R) :-
     maplist({Op}/[X, Y] >> (Y =.. [Op, X]), A, R).
@@ -53,6 +58,16 @@ maplist_op(Op, A1, A2, A3, R) :-
     maplist({Op}/[X1, X2, X3, Y] >> (Y =.. [Op, X1, X2, X3]), A1, A2, A3, R).
 maplist_op(Op, A1, A2, A3, A4, R) :-
     maplist({Op}/[X1, X2, X3, X4, Y] >> (Y =.. [Op, X1, X2, X3, X4]), A1, A2, A3, A4, R).
+
+enumerate(Xs, EXs) :-
+    length(Xs, L), numlist(1, L, Nums),
+    maplist_op(-, Nums, Xs, EXs).
+
+compare_like(List, Cmp, X1, X2) :-
+    enumerate(List, Enumerated),
+    member(I1-X1, Enumerated),
+    member(I2-X2, Enumerated),
+    compare(Cmp, I1, I2).
 
 
 % Subterms matching a given predicate
