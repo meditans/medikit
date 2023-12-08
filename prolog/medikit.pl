@@ -2,6 +2,7 @@
                       % More operations on lists
                       list_sum/2,
                       list_product/2,
+                      list_lcm/2,
                       difs/1,
                       fold_op/4,
                       fold_op/3,
@@ -39,6 +40,9 @@ list_product(L, Prod) :-
     foldl([A,B,C] >> (C is A*B), L, 1, Prod).
 
 list_sum(L, Sum) :- sum_list(L, Sum).
+
+list_lcm([X|Xs], LCM) :-
+    foldl([A,B,C]>>(C is lcm(A,B)), Xs, X, LCM).
 
 difs([]).
 difs([Var|Vars]) :- maplist(dif(Var), Vars), difs(Vars).
